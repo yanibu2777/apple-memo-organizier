@@ -1,6 +1,6 @@
 import fs from "fs";
-import { showProgress } from "./utils/progress.js";
-import { stage1SystemPrompt } from "./prompts/audit.js";
+import { showProgress } from "../utils/progress.js";
+import { stage1SystemPrompt } from "../prompts/audit.js";
 
 // Load my notes
 let raw = fs.readFileSync("notes-data.json", "utf-8");

@@ -1,7 +1,6 @@
 # Data files (contain personal notes)
-notes-data.json
-stage1-audit-report.json
-stage2-audit-report.json
+data
+backup-data
 
 # Dependencies
 node_modules/

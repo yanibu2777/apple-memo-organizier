@@ -11,12 +11,12 @@ if [ -s notes-data.json ]; then
   echo "    Use ./run.sh --fresh to re-fetch"
 else
   echo "=== Step 1: Fetching notes ==="
-  osascript -l JavaScript fetch-memo.js > notes-data.json
+  osascript -l JavaScript scripts/fetch-memo.js > data/notes-data.json
 fi
 
 echo ""
 echo "=== Step 2: Running audit ==="
-node audit.js > stage1-audit-report.json
+node scripts/audit.js > data/stage1-audit-report.json
 
 
 echo ""

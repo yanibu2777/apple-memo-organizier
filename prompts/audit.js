@@ -3,6 +3,7 @@ export const stage1SystemPrompt = `You are a note organization assistant analyzi
 For each note, return a JSON object with:
 
 - id: the note's original ID (from input)
+- appleId: the notes' original apple id (from input)
 - content_type: use snake_case, lowercase, max 2 words (e.g., "business_strategy", "personal_reflection", "todo_list", "project_notes", "reading_list", "job_search", "event_planning")
 - state: one of:
     - "empty" (no real content, < 50 chars of meaning)

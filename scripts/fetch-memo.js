@@ -10,22 +10,28 @@ function showProgress(current, total) {
         .writeData($.NSString.alloc.initWithString(text).dataUsingEncoding($.NSUTF8StringEncoding));
 }
 
+function log(message) {
+    const text = message + "\n";
+    $.NSFileHandle.fileHandleWithStandardError
+        .writeData($.NSString.alloc.initWithString(text).dataUsingEncoding($.NSUTF8StringEncoding));
+}
 
 // 1. Get the Notes app
 const Notes = Application("Notes");
-console.log("Notes App Connected")
+log("Notes App Connected")
 
 // 2. Get all notes as an array
 const allNotes = Notes.notes();
 const total = allNotes.length;
 
-console.log("Extracted all notes from notes app")
-console.log("Starting to Process")
+log("Extracted all notes from notes app")
+log("Starting to Process")
 // 3. Extract information I need from the array
 const result = allNotes.map((note, index) => {
     showProgress(index + 1, total);
     return {
         id: index,
+        appleId: note.id(),
         name: note.name(),
         body: note.plaintext(),
         charCount: note.plaintext().length,

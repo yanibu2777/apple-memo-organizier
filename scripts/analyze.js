@@ -11,12 +11,18 @@ const audits = JSON.parse(raw);
 
 // delete
 const deleteIds = audits.filter(item => item.action === "DELETE").map(
-    item => item.id
+    item => ({
+        id: item.id,
+        appleId: item.appleId
+    })
 );
 
 // need review
 const reviewIds = audits.filter(item => item.action === "NEEDS_REVIEW").map(
-    item => item.id
+    item => ({
+        id: item.id,
+        appleId: item.appleId
+    })
 );
 
 // merge
@@ -25,23 +31,26 @@ audits.forEach(item => {
     if (item.merge_hint) {
         const hint = item.merge_hint.toLowerCase().trim().replace(/\.+$/, '');
         if (!merge_groups[hint]) merge_groups[hint] = [];
-        merge_groups[hint].push(item.id);
+        merge_groups[hint].push({
+            id: item.id,
+            appleId: item.appleId
+        });
     }
 });
 
 const merge_groups_filtered = Object.fromEntries(
-    Object.entries(merge_groups).filter(([key, ids]) => ids.length >= 2)
+    Object.entries(merge_groups).filter(([key, notes]) => notes.length >= 2)
 );
 
 // produce action plan
 const actionPlan = {
     delete: {
         count: deleteIds.length,
-        ids: deleteIds
+        notes: deleteIds
     },
     review: {
         count: reviewIds.length,
-        ids: reviewIds
+        notes: reviewIds
     },
     merge: {
         count: Object.keys(merge_groups_filtered).length,

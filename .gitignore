@@ -1,12 +1,18 @@
-# Data files (contain personal notes)
-data
-backup-data
+# Personal / generated data
+data/*
+backup-data/*
+
+# Keep folder structure
+!data/.gitkeep
+!backup-data/.gitkeep
 
 # Dependencies
 node_modules/
 
-# Environment variables (API keys)
+# Environment variables / secrets
 .env
+.env.*
+!.env.example
 
 # OS files
 .DS_Store
@@ -15,4 +21,4 @@ node_modules/
 *.log
 
 # Claude Code local state
-.claude/
+.claude/settings.local.json

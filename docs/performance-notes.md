@@ -19,4 +19,6 @@
 
 ## Takeaway
 
-For batch JSON workloads, gpt-4o-mini is ~10x faster and far more reliable than local 7B models. Local LLMs are better suited for single-item, shorter prompts where context window isn't a constraint.
+For batch JSON workloads, `gpt-4o-mini` is significantly faster and more reliable than local 7B models in this repo's current setup.
+
+Local LLMs are better suited for smaller and shorter prompts where context-window pressure and structured-output reliability are less critical.

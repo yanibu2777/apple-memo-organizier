@@ -1,75 +1,84 @@
 # Apple Memo Organizer
 
 ## Project Overview
-Tool to organize Apple Notes: fetch, audit via LLM, suggest deletions/merges, execute actions.
+Tool to organize Apple Notes: fetch notes, audit them via LLM, suggest deletions or merges, and execute user-confirmed actions.
+
+This repo may involve coding help, architecture discussion, learning discussion, and workflow discussion in the same Claude Code session. That is fine. However, only **repo-relevant outputs** should be written into repo docs.
 
 ## Architecture
-- `scripts/fetch-memo.js` - JXA script (runs via osascript, NOT Node.js)
-- `scripts/audit.js` - Node.js, calls OpenAI API
-- `scripts/analyze.js` - Node.js, pure JS aggregation
-- `prompts/audit.js` - LLM system prompts
-- `utils/progress.js` - Node.js utilities (cannot be shared with JXA)
+- `scripts/fetch-memo.js` - JXA script for fetching Apple Notes data
+- `scripts/audit.js` - Node.js script that calls OpenAI
+- `scripts/audit-local-llm.js` - local-model audit experiments
+- `scripts/analyze.js` - Node.js aggregation / analysis
+- `scripts/enrich-audit.js` - maps audit results to `appleId`
+- `scripts/actions.js` - interactive review and action execution flow
+- `prompts/audit.js` - system prompt definitions
+- `utils/` - shared Node.js utilities
+- `docs/status.md` - latest project state and next steps
+- `docs/dev-notes.md` - durable repo-level technical learnings
+- `docs/performance-notes.md` - performance experiments and benchmark evidence
+- `docs/decision-log.md` - important technical decisions and tradeoffs
 
-## Key Patterns
+## Collaboration Preferences
+- Coaching mode by default.
+- Prefer syntax examples, patterns, and reasoning over full end-to-end solutions unless explicitly requested.
+- Help the user write the code rather than silently doing large chunks for them.
+- Be concrete and technically precise.
+- Clearly distinguish between:
+  - repo-level output
+  - personal learning / reflection
+  - temporary discussion noise
 
-### JXA (JavaScript for Automation)
-- Runs via `osascript -l JavaScript`, NOT Node.js
-- No `import` — inline all helpers or use eval()
-- Write to stderr for logging: `$.NSFileHandle.fileHandleWithStandardError.writeData(...)`
-- stdout is for output (JSON), stderr is for logs
+## Repo Guardrails
+- `scripts/fetch-memo.js` runs in JXA, not standard Node.js.
+- When helping with JXA code, avoid generic Node-only assumptions.
+- For opening Apple Notes by note id, use AppleScript / Notes scripting, not `notes://showNote?identifier=...`.
 
-### Apple Notes Integration
-- Get note ID: `note.id()` returns `x-coredata://UUID/ICNote/pXXX`
-- Open specific note: `osascript -e 'tell application "Notes" to show note id "..."'`
-- URL scheme `notes://showNote?identifier=` does NOT work
+## Documentation Rules
+Use the right destination for the right kind of information.
 
-#### Opening Notes Programmatically (Solved)
-**Problem:** Need to open Apple Notes and navigate to a specific note from Node.js.
+### `docs/status.md`
+Use for:
+- current focus
+- accomplished this session
+- current status
+- next steps
 
-**What didn't work:** `open "notes://showNote?identifier=..."` — opens app but doesn't navigate.
+### `docs/dev-notes.md`
+Use for:
+- durable repo-level technical learnings
+- reusable debugging lessons
+- implementation constraints discovered during development
+- technical findings worth preserving for future work in this repo
 
-**What works:**
-```bash
-# Shell
-osascript -e 'tell application "Notes" to show note id "x-coredata://..."'
-```
-```javascript
-// Node.js
-import { exec } from "child_process";
-exec(`osascript -e 'tell application "Notes" to show note id "${appleId}"'`);
-```
+### `docs/performance-notes.md`
+Use for:
+- benchmark results
+- throughput comparisons
+- model/runtime experiments
+- performance evidence
 
-**Why:** URL schemes are unreliable. AppleScript commands the app directly via its scripting dictionary.
+### `docs/decision-log.md`
+Use for:
+- major technical decisions
+- tradeoffs
+- why one option was chosen over another
 
-### JSON Files
-- May have BOM: check `raw.charCodeAt(0) === 0xFEFF` and slice if needed
+Do not store in repo docs:
+- generic tutorial content
+- trivial one-off mistakes
+- long conversational summaries
+- personal mindset reflection unless it directly affects repo collaboration or implementation
+- broad life-system planning
 
-### LLM Usage
-- OpenAI gpt-4o-mini: batch 20, parallel 5, ~100 notes/min
-- Local LLM (Ollama 7B): context window issues, unreliable JSON — avoid for batch work
+## Session Start Rule
+At the beginning of a new session:
+1. Read this file.
+2. Read `docs/status.md`.
+3. Check other docs only if needed for the current task.
 
-## User Preferences
-- Coaching mode: give syntax examples, not full solutions
-- Let user write the code, guide with patterns
-
-## Current State
-**Last updated**: 2026-03-06
-
-**Accomplished this session**:
-- Built full pipeline: fetch → audit → analyze
-- Added `appleId` to enable opening notes in Apple Notes app
-- Tested AppleScript approach for deep linking (works)
-- Created action plan with delete/review/merge lists
-- Set up CLAUDE.md and `/save-state` command
-- Documented Apple Notes navigation solution in CLAUDE.md
-
-**Current status**:
-- Pipeline complete through analysis step
-- 532 notes fetched, audited, action plan generated
-- Data files: `data/notes-data.json`, `data/stage1-audit-report.json`, `data/action-plan.json`
-
-**Next steps**:
-- [ ] Build `scripts/actions.js` — interactive delete with batch preview
-- [ ] Open each note in Notes app for review before confirming delete
-- [ ] Add merge execution (combine notes with same hint)
-- [ ] Improve merge_hint normalization (handle synonyms like "personal growth" vs "personal reflection")
+## Documentation Map
+- Latest project state: `docs/status.md`
+- Durable repo learnings: `docs/dev-notes.md`
+- Performance experiments: `docs/performance-notes.md`
+- Major decisions: `docs/decision-log.md`
